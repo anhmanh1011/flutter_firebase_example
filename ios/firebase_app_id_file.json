@@ -1,7 +1,7 @@
 {
   "file_generated_by": "FlutterFire CLI",
   "purpose": "FirebaseAppID & ProjectID for this Firebase app in this directory",
-  "GOOGLE_APP_ID": "1:973701866197:ios:17a0b1f52a6113c9cfb85c",
-  "FIREBASE_PROJECT_ID": "pushnotify-kss",
-  "GCM_SENDER_ID": "973701866197"
+  "GOOGLE_APP_ID": "1:385425874809:ios:ad98f8bd4fcd73164e99a8",
+  "FIREBASE_PROJECT_ID": "kss-notification",
+  "GCM_SENDER_ID": "385425874809"
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_app_installations/firebase_app_installations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -21,11 +22,30 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('A bg message just showed up :  ${message.messageId}');
 }
 
+Future<void> getToken() async {
+  var token = FirebaseMessaging.instance.getToken();
+  token.then((value) => debugPrint('token : $value'));
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseInstallations installations = FirebaseInstallations.instance;
+  installations.getToken().then((value) => debugPrint('token install: $value'));
+  String id = await installations.getId();
+  debugPrint('getID: $id');
+  installations.onIdChange.listen((token) {
+    debugPrint('FID token: $token');
+  });
+  FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+    debugPrint('onTokenRefresh $fcmToken');
+  }).onError((err) {
+    debugPrint(err.toString());
+  });
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await flutterLocalNotificationsPlugin
@@ -38,8 +58,7 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
-  var token = FirebaseMessaging.instance.getToken();
-  token.then((value) => debugPrint('token : $value'));
+  getToken();
   runApp(MyApp());
 }
 
@@ -114,6 +133,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void showNotification() {
+    if (_counter % 2 == 0) {
+      FirebaseMessaging.instance.deleteToken();
+    } else {
+      getToken();
+    }
+
     setState(() {
       _counter++;
     });
@@ -139,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               'You have pushed the button this many times:',
             ),
             Text(

@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDHZiEBJMA1qDRP74z7gkEvMVXCA9iFZLU',
-    appId: '1:973701866197:android:24c8f8693d706a44cfb85c',
-    messagingSenderId: '973701866197',
-    projectId: 'pushnotify-kss',
-    storageBucket: 'pushnotify-kss.appspot.com',
+    apiKey: 'AIzaSyCgSIaYPEKw0xQDH9N_m9J95b1_yhQAmwM',
+    appId: '1:385425874809:android:6d39a5857ad7aa864e99a8',
+    messagingSenderId: '385425874809',
+    projectId: 'kss-notification',
+    storageBucket: 'kss-notification.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCO6j_t5xTFOh-VU79S2Rog6VXXaAE6PvY',
-    appId: '1:973701866197:ios:17a0b1f52a6113c9cfb85c',
-    messagingSenderId: '973701866197',
-    projectId: 'pushnotify-kss',
-    storageBucket: 'pushnotify-kss.appspot.com',
-    iosClientId: '973701866197-t7vqilbcdu2g1t2g42qbv8hufbc886nl.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDWWQM2zQRCxXF1skV3vZf2CxqQMfRFPcc',
+    appId: '1:385425874809:ios:ad98f8bd4fcd73164e99a8',
+    messagingSenderId: '385425874809',
+    projectId: 'kss-notification',
+    storageBucket: 'kss-notification.appspot.com',
+    iosClientId: '385425874809-2unaqc1gi746o3hree1r87cfnbkvcr2g.apps.googleusercontent.com',
     iosBundleId: 'com.example.myApp',
   );
 }
