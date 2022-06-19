@@ -19,7 +19,22 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  debugPrint('A bg message just showed up :  ${message.messageId}');
+  debugPrint('A bg message just showed up :  ${message.data}');
+  if (message.data['user'].toString() == "1") {
+    debugPrint("user is string");
+  } else {
+    debugPrint('not string');
+  }
+  flutterLocalNotificationsPlugin.show(
+      1,
+      message.data['title'],
+      message.data['body'],
+      NotificationDetails(
+          android: AndroidNotificationDetails(channel.id, channel.name,
+              importance: Importance.high,
+              color: Colors.blue,
+              playSound: true,
+              icon: '@mipmap/ic_launcher')));
 }
 
 Future<void> getToken() async {
@@ -134,7 +149,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void showNotification() {
     if (_counter % 2 == 0) {
-      FirebaseMessaging.instance.deleteToken();
+      FirebaseMessaging.instance.deleteToken().whenComplete(() {
+        debugPrint('delete token success ');
+        getToken();
+      });
     } else {
       getToken();
     }
