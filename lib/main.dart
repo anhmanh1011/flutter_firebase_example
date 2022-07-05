@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_app_installations/firebase_app_installations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
 import 'firebase_options.dart';
 
@@ -37,9 +41,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
               icon: '@mipmap/ic_launcher')));
 }
 
-Future<void> getToken() async {
-  var token = FirebaseMessaging.instance.getToken();
-  token.then((value) => debugPrint('token : $value'));
+Future<String?> getToken() async {
+  return await FirebaseMessaging.instance.getToken();
 }
 
 Future<void> main() async {
@@ -73,7 +76,6 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
-  getToken();
   runApp(MyApp());
 }
 
@@ -147,15 +149,18 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void toast(String mes) {
+    Fluttertoast.showToast(
+        msg: mes,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.blue,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
   void showNotification() {
-    if (_counter % 2 == 0) {
-      FirebaseMessaging.instance.deleteToken().whenComplete(() {
-        debugPrint('delete token success ');
-        getToken();
-      });
-    } else {
-      getToken();
-    }
 
     setState(() {
       _counter++;
@@ -172,8 +177,101 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: '@mipmap/ic_launcher')));
   }
 
+  void registerDevice(String userName, String token) async {
+    try {
+      var split = token.split(":");
+      var url =
+          Uri.parse('http://172.16.6.32:8811/e/device/register/$userName');
+      final body = {
+        "device_name": "3123131312",
+        "install_id": split[0],
+        "os": "os",
+        "token": token
+      };
+
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body));
+
+      // response.then((value) => debugPrint(value.body));
+      if (response.statusCode == 200) {
+        toast("register device success!!!");
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  void unregisterDevice(String userName, String token) async {
+    try {
+      var split = token.split(":");
+      var url =
+          Uri.parse('http://172.16.6.32:8811/e/device/unregister/$userName');
+      final body = {
+        "device_name": "3123131312",
+        "install_id": split[0],
+        "os": "os",
+        "token": token
+      };
+
+      var response = await http.delete(url,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body));
+
+      // response.then((value) => debugPrint(value.body));
+      if (response.statusCode == 200) {
+        toast("unregister device success!!!");
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  void subscribeTopic(String userName) async {
+    try {
+      String topic = 'topic_1';
+      var url =
+          Uri.parse('http://172.16.6.32:8811/e/topic/subscribe/$userName');
+      final body = {"topic_name": topic};
+
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body));
+
+      // response.then((value) => debugPrint(value.body));
+      if (response.statusCode == 200) {
+        toast("subscribe topic success!!!");
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  void unsubscribeTopic(String userName) async {
+    try {
+      String topic = 'topic_1';
+      var url =
+          Uri.parse('http://172.16.6.32:8811/e/topic/unsubscribe/$userName');
+      final body = {"topic_name": topic};
+
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body));
+
+      // response.then((value) => debugPrint(value.body));
+      if (response.statusCode == 200) {
+        toast("unsubscribe topic success!!!");
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var myController = TextEditingController();
+    String? token = '';
+    getToken().then((value) => token = value);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -185,9 +283,52 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            TextField(
+              controller: myController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter a search term',
+              ),
+            ),
+            Row(
+              children: [
+                FlatButton(
+                  child: const Text(
+                    'đằng ký device',
+                    style: TextStyle(fontSize: 10.0),
+                  ),
+                  onPressed: () {
+                    registerDevice(myController.text, token!);
+                  },
+                ),
+                FlatButton(
+                  child: const Text(
+                    'delete device',
+                    style: TextStyle(fontSize: 10.0),
+                  ),
+                  onPressed: () {
+                    unregisterDevice(myController.text, token!);
+                  },
+                ),
+                FlatButton(
+                  child: const Text(
+                    'subscribe topic: topic_1',
+                    style: TextStyle(fontSize: 10.0),
+                  ),
+                  onPressed: () {
+                    subscribeTopic(myController.text);
+                  },
+                ),
+                FlatButton(
+                  child: const Text(
+                    'unsubscribe topic: topic_1',
+                    style: TextStyle(fontSize: 10.0),
+                  ),
+                  onPressed: () {
+                    unsubscribeTopic(myController.text);
+                  },
+                ),
+              ],
             ),
           ],
         ),
