@@ -121,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
             message.data['title'],
             message.data['body'],
             NotificationDetails(
+
               android: AndroidNotificationDetails(
                 channel.id,
                 channel.name,
@@ -183,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       var split = token.split(":");
       var url =
-          Uri.parse('http://172.16.6.32:8811/e/device/register/$userName');
+          Uri.parse('http://10.199.18.5:8811/e/device/register/$userName');
       final body = {
         "device_name": "3123131312",
         "install_id": split[0],
@@ -200,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
         toast("register device success!!!");
       }
     } catch (error) {
-      print(error);
+      debugPrint(error.toString());
     }
   }
 
@@ -208,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       var split = token.split(":");
       var url =
-          Uri.parse('http://172.16.6.32:8811/e/device/unregister/$userName');
+          Uri.parse('http://10.199.18.5:8811/e/device/unregister/$userName');
       final body = {
         "device_name": "3123131312",
         "install_id": split[0],
@@ -225,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
         toast("unregister device success!!!");
       }
     } catch (error) {
-      print(error);
+      debugPrint(error.toString());
     }
   }
 
@@ -233,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       String topic = 'topic_1';
       var url =
-          Uri.parse('http://172.16.6.32:8811/e/topic/subscribe/$userName');
+          Uri.parse('http://10.199.18.5:8811/e/topic/subscribe/$userName');
       final body = {"topic_name": topic};
 
       var response = await http.post(url,
@@ -245,7 +246,7 @@ class _MyHomePageState extends State<MyHomePage> {
         toast("subscribe topic success!!!");
       }
     } catch (error) {
-      print(error);
+      debugPrint(error.toString());
     }
   }
 
@@ -253,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       String topic = 'topic_1';
       var url =
-          Uri.parse('http://172.16.6.32:8811/e/topic/unsubscribe/$userName');
+          Uri.parse('http://10.199.18.5:8811/e/topic/unsubscribe/$userName');
       final body = {"topic_name": topic};
 
       var response = await http.post(url,
@@ -265,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
         toast("unsubscribe topic success!!!");
       }
     } catch (error) {
-      print(error);
+      debugPrint(error.toString());
     }
   }
 
@@ -297,7 +298,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 FlatButton(
                   child: const Text(
                     'đằng ký device',
-                    style: TextStyle(fontSize: 10.0),
+                    style: TextStyle(fontSize: 5.0),
                   ),
                   onPressed: () {
                     registerDevice(myController.text, token!);
@@ -306,7 +307,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 FlatButton(
                   child: const Text(
                     'delete device',
-                    style: TextStyle(fontSize: 10.0),
+                    style: TextStyle(fontSize: 5.0),
                   ),
                   onPressed: () {
                     unregisterDevice(myController.text, token!);
@@ -315,7 +316,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 FlatButton(
                   child: const Text(
                     'subscribe topic: topic_1',
-                    style: TextStyle(fontSize: 10.0),
+                    style: TextStyle(fontSize: 5.0),
                   ),
                   onPressed: () {
                     subscribeTopic(myController.text);
@@ -324,7 +325,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 FlatButton(
                   child: const Text(
                     'unsubscribe topic: topic_1',
-                    style: TextStyle(fontSize: 10.0),
+                    style: TextStyle(fontSize: 5.0),
                   ),
                   onPressed: () {
                     unsubscribeTopic(myController.text);
