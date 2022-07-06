@@ -30,7 +30,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     debugPrint('not string');
   }
   flutterLocalNotificationsPlugin.show(
-      1,
+      message.hashCode,
       message.data['title'],
       message.data['body'],
       NotificationDetails(
@@ -107,14 +107,19 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
+      debugPrint('A new onMessageOpenedApp event was published!');
+      var data = message.data;
+      debugPrint(data.toString());
+      // if (notification != null  ) {
+
         flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
+            0,
+            message.data['title'],
+            message.data['body'],
             NotificationDetails(
               android: AndroidNotificationDetails(
                 channel.id,
@@ -124,28 +129,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: '@mipmap/ic_launcher',
               ),
             ));
-      }
+      // }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint('A new onMessageOpenedApp event was published!');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        showDialog(
-            context: context,
-            builder: (_) {
-              return AlertDialog(
-                title: Text(notification.title ?? 'no title'),
-                content: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [Text(notification.body ?? 'no body')],
-                  ),
-                ),
-              );
-            });
-      }
+      // if (notification != null ) {
+        flutterLocalNotificationsPlugin.show(
+            0,
+            message.data['title'],
+            message.data['body'],
+            NotificationDetails(
+                android: AndroidNotificationDetails(channel.id, channel.name,
+                    importance: Importance.high,
+                    color: Colors.blue,
+                    playSound: true,
+                    icon: '@mipmap/ic_launcher')));
+      // }
     });
   }
 
