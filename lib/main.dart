@@ -180,11 +180,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: '@mipmap/ic_launcher')));
   }
 
+  String host = 'http://192.168.1.130:8811';
+
   void registerDevice(String userName, String token) async {
     try {
       var split = token.split(":");
       var url =
-          Uri.parse('http://10.199.18.5:8811/e/device/register/$userName');
+          Uri.parse('$host/e/device/register/$userName');
       final body = {
         "device_name": "3123131312",
         "install_id": split[0],
@@ -209,7 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       var split = token.split(":");
       var url =
-          Uri.parse('http://10.199.18.5:8811/e/device/unregister/$userName');
+          Uri.parse('$host/e/device/unregister/$userName');
       final body = {
         "device_name": "3123131312",
         "install_id": split[0],
@@ -234,7 +236,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       String topic = 'topic_1';
       var url =
-          Uri.parse('http://10.199.18.5:8811/e/topic/subscribe/$userName');
+          Uri.parse('$host/e/topic/subscribe/$userName');
       final body = {"topic_name": topic};
 
       var response = await http.post(url,
@@ -254,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       String topic = 'topic_1';
       var url =
-          Uri.parse('http://10.199.18.5:8811/e/topic/unsubscribe/$userName');
+          Uri.parse('$host/e/topic/unsubscribe/$userName');
       final body = {"topic_name": topic};
 
       var response = await http.post(url,
