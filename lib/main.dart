@@ -6,9 +6,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-
 import 'firebase_options.dart';
+import 'package:http/http.dart' as http;
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel', // id
@@ -116,20 +115,19 @@ class _MyHomePageState extends State<MyHomePage> {
       debugPrint(data.toString());
       // if (notification != null  ) {
 
-        flutterLocalNotificationsPlugin.show(
-            0,
-            message.data['title'],
-            message.data['body'],
-            NotificationDetails(
-
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                color: Colors.blue,
-                playSound: true,
-                icon: '@mipmap/ic_launcher',
-              ),
-            ));
+      flutterLocalNotificationsPlugin.show(
+          0,
+          message.data['title'],
+          message.data['body'],
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              color: Colors.blue,
+              playSound: true,
+              icon: '@mipmap/ic_launcher',
+            ),
+          ));
       // }
     });
 
@@ -138,16 +136,16 @@ class _MyHomePageState extends State<MyHomePage> {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       // if (notification != null ) {
-        flutterLocalNotificationsPlugin.show(
-            0,
-            message.data['title'],
-            message.data['body'],
-            NotificationDetails(
-                android: AndroidNotificationDetails(channel.id, channel.name,
-                    importance: Importance.high,
-                    color: Colors.blue,
-                    playSound: true,
-                    icon: '@mipmap/ic_launcher')));
+      flutterLocalNotificationsPlugin.show(
+          0,
+          message.data['title'],
+          message.data['body'],
+          NotificationDetails(
+              android: AndroidNotificationDetails(channel.id, channel.name,
+                  importance: Importance.high,
+                  color: Colors.blue,
+                  playSound: true,
+                  icon: '@mipmap/ic_launcher')));
       // }
     });
   }
@@ -164,7 +162,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void showNotification() {
-
     setState(() {
       _counter++;
     });
@@ -180,13 +177,86 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: '@mipmap/ic_launcher')));
   }
 
-  String host = 'http://192.168.1.130:8811';
+  // String host = 'http://172.16.6.32:8811';
+  String host = 'https://apiuat.kss.com.vn/uat/v1/device';
+  String hostLocal = 'http://172.16.6.32:8809/push_notification';
+
+  // String host = 'http://10.199.18.5:8811';
+
+  void sendToUser(String userName) async {
+    try {
+      var url = Uri.parse('$hostLocal/i/push');
+      final body = {
+        "body": 'body cua $userName',
+        "data": {
+          "body": 'body cua $userName',
+          "title": "title cua  $userName",
+          "additionalProp3": "string"
+        },
+        "id": DateTime.now().millisecondsSinceEpoch.toString(),
+        // "listUser": [userName],
+        "lstFileAttach": "string",
+        "messageType": "ACCOUNT",
+        "providerType": "FIRE_BASE",
+        "sendType": "SINGLE",
+        "template": "string",
+        "title": "string",
+        "topic": "topic_1",
+        "url": "string",
+        "user": userName
+      };
+
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body));
+
+      // response.then((value) => debugPrint(value.body));
+      if (response.statusCode == 200) {
+        toast("Send request success!!!");
+      }
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
+
+  void sendToTopic(String topic) async {
+    try {
+      var url = Uri.parse('$hostLocal/i/push');
+      final body = {
+        "body": ' body cua topic: $topic',
+        "data": {
+          "body": ' body cua topic: $topic',
+          "title": "title cua topic: $topic",
+          "additionalProp3": "string"
+        },
+        "id": DateTime.now().millisecondsSinceEpoch,
+        "lstFileAttach": "string",
+        "messageType": "ACCOUNT",
+        "providerType": "FIRE_BASE",
+        "sendType": "TOPIC",
+        "template": "string",
+        "title": "string",
+        "topic": topic,
+        "url": "string",
+      };
+
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(body));
+
+      // response.then((value) => debugPrint(value.body));
+      if (response.statusCode == 200) {
+        toast("Send request success!!!");
+      }
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
 
   void registerDevice(String userName, String token) async {
     try {
       var split = token.split(":");
-      var url =
-          Uri.parse('$host/e/device/register/$userName');
+      var url = Uri.parse('$host/p/device/register/$userName');
       final body = {
         "device_name": "3123131312",
         "install_id": split[0],
@@ -210,8 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void unregisterDevice(String userName, String token) async {
     try {
       var split = token.split(":");
-      var url =
-          Uri.parse('$host/e/device/unregister/$userName');
+      var url = Uri.parse('$host/p/device/unregister/$userName');
       final body = {
         "device_name": "3123131312",
         "install_id": split[0],
@@ -219,7 +288,7 @@ class _MyHomePageState extends State<MyHomePage> {
         "token": token
       };
 
-      var response = await http.delete(url,
+      var response = await http.post(url,
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(body));
 
@@ -235,8 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void subscribeTopic(String userName) async {
     try {
       String topic = 'topic_1';
-      var url =
-          Uri.parse('$host/e/topic/subscribe/$userName');
+      var url = Uri.parse('$host/p/topic/subscribe/$userName');
       final body = {"topic_name": topic};
 
       var response = await http.post(url,
@@ -255,8 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void unsubscribeTopic(String userName) async {
     try {
       String topic = 'topic_1';
-      var url =
-          Uri.parse('$host/e/topic/unsubscribe/$userName');
+      var url = Uri.parse('$host/p/topic/unsubscribe/$userName');
       final body = {"topic_name": topic};
 
       var response = await http.post(url,
@@ -275,6 +342,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var myController = TextEditingController();
+    var myControllerForTest = TextEditingController();
     String? token = '';
     getToken().then((value) => token = value);
     return Scaffold(
@@ -335,6 +403,33 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+            TextField(
+              controller: myControllerForTest,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Test',
+              ),
+            ),
+            Row(children: [
+              FlatButton(
+                child: const Text(
+                  'Send to User',
+                  style: TextStyle(fontSize: 5.0),
+                ),
+                onPressed: () {
+                  sendToUser(myControllerForTest.text);
+                },
+              ),
+              FlatButton(
+                child: const Text(
+                  'Send to topic',
+                  style: TextStyle(fontSize: 5.0),
+                ),
+                onPressed: () {
+                  sendToTopic(myControllerForTest.text);
+                },
+              ),
+            ])
           ],
         ),
       ),
