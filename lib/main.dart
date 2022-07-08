@@ -179,6 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // String host = 'http://172.16.6.32:8811';
   String host = 'https://apiuat.kss.com.vn/uat/v1/device';
+  // String host = 'http://172.16.6.32:8811';
   String hostLocal = 'http://172.16.6.32:8809/push_notification';
 
   // String host = 'http://10.199.18.5:8811';
